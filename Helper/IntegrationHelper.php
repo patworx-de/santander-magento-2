@@ -22,7 +22,7 @@ class IntegrationHelper
 
     public function log($level, $id, $msg, $body = '')
     {
-        file_put_contents(BP . '/var/log/santander_' . $level . '.log', date('Y-m-d H:i:s') . ' [' . $id . '] ' . $msg . ($body ? "\n\n" . print_r($body, true) . "\n\n" : '') . "\n", FILE_APPEND);
+        //file_put_contents(BP . '/var/log/santander_' . $level . '.log', date('Y-m-d H:i:s') . ' [' . $id . '] ' . $msg . ($body ? "\n\n" . print_r($body, true) . "\n\n" : '') . "\n", FILE_APPEND);
     }
 
     public function setLastReference($reference)

@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="payment">
+            <group id="santander_invoice" translate="label" type="text" sortOrder="1" showInDefault="1"
+                   showInWebsite="1" showInStore="1">
+                <label>Santander Rechnungskauf<img src="https://santander.shop-profis.de/magento/2.x/pub/static/version1550951415/frontend/Magento/luma/de_DE/images/logo.svg" /></label>
+                <field id="active" translate="label" type="select" sortOrder="100" showInDefault="1" showInWebsite="1"
+                       showInStore="0">
+                    <label>Aktiv</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="sender_id" translate="label" type="text" sortOrder="200" showInDefault="1" showInWebsite="1"
+                       showInStore="0">
+                    <label>Sender ID</label>
+                </field>
+                <field id="login" translate="label" type="text" sortOrder="300" showInDefault="1" showInWebsite="1"
+                       showInStore="0">
+                    <label>Login</label>
+                </field>
+                <field id="password" translate="label" type="text" sortOrder="400" showInDefault="1" showInWebsite="1"
+                       showInStore="0">
+                    <label>Passwort</label>
+                </field>
+                <field id="channel" translate="label" type="text" sortOrder="500" showInDefault="1" showInWebsite="1"
+                       showInStore="0">
+                    <label>Channel</label>
+                </field>
+                <field id="is_live" translate="label" type="select" sortOrder="600" showInDefault="1" showInWebsite="1"
+                       showInStore="0">
+                    <label>Live-Modus</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="sort_order" translate="label" type="text" sortOrder="700" showInDefault="1" showInWebsite="1"
+                       showInStore="0">
+                    <label>Sort Order</label>
+                    <frontend_class>validate-number</frontend_class>
+                </field>
+            </group>
+            <group id="santander_hire" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1"
+                   showInStore="1">
+                <label>Santander Ratenkauf</label>
+                <field id="active" translate="label" type="select" sortOrder="100" showInDefault="1" showInWebsite="1"
+                       showInStore="0">
+                    <label>Aktiv</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="sender_id" translate="label" type="text" sortOrder="200" showInDefault="1" showInWebsite="1"
+                       showInStore="0">
+                    <label>Sender ID</label>
+                </field>
+                <field id="login" translate="label" type="text" sortOrder="300" showInDefault="1" showInWebsite="1"
+                       showInStore="0">
+                    <label>Login</label>
+                </field>
+                <field id="password" translate="label" type="text" sortOrder="400" showInDefault="1" showInWebsite="1"
+                       showInStore="0">
+                    <label>Passwort</label>
+                </field>
+                <field id="channel" translate="label" type="text" sortOrder="500" showInDefault="1" showInWebsite="1"
+                       showInStore="0">
+                    <label>Channel</label>
+                </field>
+                <field id="is_live" translate="label" type="select" sortOrder="600" showInDefault="1" showInWebsite="1"
+                       showInStore="0">
+                    <label>Live-Modus</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="sort_order" translate="label" type="text" sortOrder="700" showInDefault="1" showInWebsite="1"
+                       showInStore="0">
+                    <label>Sort Order</label>
+                    <frontend_class>validate-number</frontend_class>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

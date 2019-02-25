@@ -1,0 +1,17 @@
+<?xml version="1.0" ?>
+<payment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Payment:etc/payment.xsd">
+    <groups>
+        <group id="santander_payment_solutions">
+            <label>Santander Payment Solutions</label>
+        </group>
+    </groups>
+    <methods>
+        <method name="santander_invoice">
+            <allow_multiple_address>0</allow_multiple_address>
+        </method>
+        <method name="santander_hire">
+            <allow_multiple_address>0</allow_multiple_address>
+        </method>
+    </methods>
+</payment>

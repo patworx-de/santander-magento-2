@@ -1,0 +1,51 @@
+<?xml version="1.0" ?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <payment>
+            <santander_invoice>
+                <debug>1</debug>
+                <active>0</active>
+                <model>SantanderInvoiceFacade</model>
+                <sender_id>SENDER_ID</sender_id>
+                <login>LOGIN</login>
+                <password>PASSWORD</password>
+                <channel>CHANNEL</channel>
+                <is_live>1</is_live>
+                <order_status>pending_payment</order_status>
+                <payment_action>authorize</payment_action>
+                <title>Santander Rechnungskauf</title>
+                <currency>EUR</currency>
+                <can_authorize>0</can_authorize>
+                <can_capture>1</can_capture>
+                <can_void>1</can_void>
+                <can_use_checkout>1</can_use_checkout>
+                <is_gateway>1</is_gateway>
+                <sort_order>1</sort_order>
+                <min_order_total>20</min_order_total>
+                <max_order_total>1000</max_order_total>
+                <paymentInfoKeys>test,bank_info</paymentInfoKeys>
+            </santander_invoice>
+            <santander_hire>
+                <debug>1</debug>
+                <active>0</active>
+                <model>SantanderHireFacade</model>
+                <sender_id>SENDER_ID</sender_id>
+                <login>LOGIN</login>
+                <password>PASSWORD</password>
+                <channel>CHANNEL</channel>
+                <is_live>1</is_live>
+                <order_status>pending_payment</order_status>
+                <payment_action>authorize</payment_action>
+                <title>Santander Ratenkauf</title>
+                <currency>EUR</currency>
+                <can_authorize>0</can_authorize>
+                <can_capture>1</can_capture>
+                <can_void>1</can_void>
+                <can_use_checkout>1</can_use_checkout>
+                <is_gateway>1</is_gateway>
+                <sort_order>1</sort_order>
+            </santander_hire>
+        </payment>
+    </default>
+</config>

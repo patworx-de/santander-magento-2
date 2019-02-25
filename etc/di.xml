@@ -1,0 +1,147 @@
+<?xml version="1.0"?>
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <virtualType name="SantanderInvoiceFacade" type="Magento\Payment\Model\Method\Adapter">
+        <arguments>
+            <argument name="code" xsi:type="const">
+                SantanderPaymentSolutions\SantanderPayments\Model\Ui\InvoiceConfigProvider::CODE
+            </argument>
+            <argument name="formBlockType" xsi:type="string">
+                Magento\Payment\Block\Form
+            </argument>
+            <argument name="infoBlockType" xsi:type="string">
+                SantanderPaymentSolutions\SantanderPayments\Block\InvoiceInfo
+            </argument>
+            <argument name="valueHandlerPool" xsi:type="object">SantanderInvoiceValueHandlerPool</argument>
+            <argument name="commandPool" xsi:type="object">SantanderInvoiceCommandPool</argument>
+            <argument name="validatorPool" xsi:type="object">SantanderInvoiceValidatorPool</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="SantanderInvoiceValidatorPool" type="Magento\Payment\Gateway\Validator\ValidatorPool">
+        <arguments>
+            <argument name="validators" xsi:type="array">
+                <item name="country" xsi:type="string">SantanderCountryValidator</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="SantanderInvoiceConfig" type="Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="const">
+                SantanderPaymentSolutions\SantanderPayments\Model\Ui\InvoiceConfigProvider::CODE
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="SantanderInvoiceLogger" type="Magento\Payment\Model\Method\Logger">
+        <arguments>
+            <argument name="config" xsi:type="object">SantanderInvoiceConfig</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="SantanderInvoiceCommandPool" type="Magento\Payment\Gateway\Command\CommandPool">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="authorize" xsi:type="string">SantanderInvoiceAuthorizeCommand</item>
+                <item name="capture" xsi:type="string">SantanderInvoiceCaptureCommand</item>
+                <!--<item name="void" xsi:type="string">SantanderInvoiceVoidCommand</item>-->
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="SantanderInvoiceAuthorizeCommand"
+                 type="SantanderPaymentSolutions\SantanderPayments\Gateway\Command\InvoiceAuthorizeCommand">
+
+    </virtualType>
+    <virtualType name="SantanderInvoiceCaptureCommand"
+                 type="SantanderPaymentSolutions\SantanderPayments\Gateway\Command\InvoiceCaptureCommand">
+
+    </virtualType>
+    <type name="SantanderPaymentSolutions\SantanderPayments\Block\InvoiceInfo">
+        <arguments>
+            <argument name="config" xsi:type="object">SantanderInvoiceConfig</argument>
+        </arguments>
+    </type>
+    <virtualType name="SantanderInvoiceValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="default" xsi:type="string">SantanderInvoiceConfigValueHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="SantanderInvoiceConfigValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">SantanderInvoiceConfig</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="SantanderHireFacade" type="Magento\Payment\Model\Method\Adapter">
+        <arguments>
+            <argument name="code" xsi:type="const">
+                SantanderPaymentSolutions\SantanderPayments\Model\Ui\HireConfigProvider::CODE
+            </argument>
+            <argument name="formBlockType" xsi:type="string">
+                Magento\Payment\Block\Form
+            </argument>
+            <argument name="infoBlockType" xsi:type="string">
+                SantanderPaymentSolutions\SantanderPayments\Block\HireInfo
+            </argument>
+            <argument name="valueHandlerPool" xsi:type="object">SantanderHireValueHandlerPool</argument>
+            <argument name="commandPool" xsi:type="object">SantanderHireCommandPool</argument>
+            <argument name="validatorPool" xsi:type="object">SantanderHireValidatorPool</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="SantanderHireValidatorPool" type="Magento\Payment\Gateway\Validator\ValidatorPool">
+        <arguments>
+            <argument name="validators" xsi:type="array">
+                <item name="country" xsi:type="string">SantanderCountryValidator</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="SantanderHireConfig" type="Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="const">
+                SantanderPaymentSolutions\SantanderPayments\Model\Ui\HireConfigProvider::CODE
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="SantanderHireLogger" type="Magento\Payment\Model\Method\Logger">
+        <arguments>
+            <argument name="config" xsi:type="object">SantanderHireConfig</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="SantanderHireCommandPool" type="Magento\Payment\Gateway\Command\CommandPool">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="authorize" xsi:type="string">SantanderHireAuthorizeCommand</item>
+                <item name="capture" xsi:type="string">SantanderHireCaptureCommand</item>
+                <!--<item name="void" xsi:type="string">SantanderHireVoidCommand</item>-->
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="SantanderHireAuthorizeCommand"
+                 type="SantanderPaymentSolutions\SantanderPayments\Gateway\Command\HireAuthorizeCommand">
+
+    </virtualType>
+    <virtualType name="SantanderHireCaptureCommand"
+                 type="SantanderPaymentSolutions\SantanderPayments\Gateway\Command\HireCaptureCommand">
+
+    </virtualType>
+    <type name="SantanderPaymentSolutions\SantanderPayments\Block\HireInfo">
+        <arguments>
+            <argument name="config" xsi:type="object">SantanderHireConfig</argument>
+        </arguments>
+    </type>
+    <virtualType name="SantanderHireValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="default" xsi:type="string">SantanderHireConfigValueHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="SantanderHireConfigValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">SantanderHireConfig</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="SantanderCountryValidator"
+                 type="SantanderPaymentSolutions\SantanderPayments\Gateway\Validator\CountryValidator">
+
+    </virtualType>
+</config>

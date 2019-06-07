@@ -37,5 +37,8 @@
     "email": "service@patworx.de"
   },
   "homepage": "https://www.patworx.de/santander/",
-  "keywords": []
+  "keywords": [
+    "payment",
+    "santander"
+  ]
 }

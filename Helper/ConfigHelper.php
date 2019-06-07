@@ -20,7 +20,7 @@ class ConfigHelper extends AbstractHelper implements ConfigHelperInterface
 
     public function getCallbackUrl()
     {
-        return $this->_urlBuilder->getRouteUrl('santander/callback/index/');
+        return $this->_urlBuilder->getRouteUrl('santander/callback/');
     }
 
     public function getAuth($method, $store = null)

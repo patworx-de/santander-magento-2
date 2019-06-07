@@ -4,6 +4,7 @@ namespace SantanderPaymentSolutions\SantanderPayments\Controller\Callback;
 
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
+use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\View\Result\PageFactory;
 use SantanderPaymentSolutions\SantanderPayments\Helper\IntegrationHelper;
 use SantanderPaymentSolutions\SantanderPayments\Helper\TransactionHelper;
@@ -32,10 +33,7 @@ class Index extends Action
 
     public function execute()
     {
-
         $vars = $this->context->getRequest()->getPostValue();
-
-        $this->integrationHelper->log('info', __METHOD__ . '::' . __LINE__, 'execute callback controller', ['vars' => $vars, 'get' => $_GET, 'post' => $_POST, 'server' => $_SERVER]);
         if (!empty($vars["action"]) && $vars["action"] == 'reauthorize_invoice') {
             $response = $this->transactionHelper->authorize('invoice');
             $return   = ['success' => 0];
@@ -44,8 +42,10 @@ class Index extends Action
                 $return["redirect_url"] = $response->responseArray["frontend"]["redirect_url"];
                 $this->integrationHelper->setLastReference($response->responseArray["identification"]["transactionid"]);
             }
-            echo json_encode($return);
-            die;
+            /** @var \Magento\Framework\Controller\Result\Json $response */
+            $response = $this->resultFactory->create(ResultFactory::TYPE_JSON);
+            $response->setData($return);
+            return $response;
         } elseif (!empty($vars["action"]) && $vars["action"] == 'initialize_hire') {
             $response = $this->transactionHelper->initialize('hire', $vars["NAME_BIRTHDATE"]);
             $return   = ['success' => 0];
@@ -54,8 +54,10 @@ class Index extends Action
                 $return["redirect_url"] = $response->responseArray["frontend"]["redirect_url"];
                 $this->integrationHelper->setLastReference($response->responseArray["identification"]["transactionid"]);
             }
-            echo json_encode($return);
-            die;
+            /** @var \Magento\Framework\Controller\Result\Json $response */
+            $response = $this->resultFactory->create(ResultFactory::TYPE_JSON);
+            $response->setData($return);
+            return $response;
         } elseif (!empty($vars["action"]) && $vars["action"] == 'authorize_on_registration') {
             $return = ['success' => 0];
             if ($cReference = $this->integrationHelper->getLastReference()) {
@@ -68,14 +70,15 @@ class Index extends Action
                     $this->integrationHelper->setLastReference($response->responseArray["identification"]["transactionid"]);
                 }
             }
-            echo json_encode($return);
-            die;
+            /** @var \Magento\Framework\Controller\Result\Json $response */
+            $response = $this->resultFactory->create(ResultFactory::TYPE_JSON);
+            $response->setData($return);
+            return $response;
         } elseif (!empty($vars["IDENTIFICATION_TRANSACTIONID"])) {
-            $this->ipnAction($vars);
+            return $this->ipnAction($vars);
         } else {
-            $this->customerFrontendAction($vars);
+            return $this->customerFrontendAction($vars);
         }
-        return $this->_pageFactory->create();
     }
 
     private function ipnAction($vars)
@@ -117,15 +120,16 @@ class Index extends Action
         if ($vars["PROCESSING_RESULT"] !== 'ACK') {
             $this->integrationHelper->log('error', __CLASS__ . '..' . __METHOD__ . '::' . __LINE__, 'IPN error', $vars);
         }
-        echo 'IPN DONE';
-        die;
+        /** @var \Magento\Framework\Controller\Result\Raw $_response */
+        $_response = $this->resultFactory->create(ResultFactory::TYPE_RAW);
+        $_response->setContents('IPN DONE');
+        return $_response;
     }
 
     private function customerFrontendAction($vars)
     {
         $return = ['success' => 0];
         $this->integrationHelper->log('info', __CLASS__ . '..' . __METHOD__ . '::' . __LINE__, 'customer frontend action', $vars);
-
         if ($cReference = $this->integrationHelper->getLastReference()) {
             $return['reference'] = $cReference;
             $transaction         = $this->transactionHelper->getByReference($cReference, null, null);
@@ -138,15 +142,21 @@ class Index extends Action
                     if ($initialize2Transaction =  $this->transactionHelper->getByReference($cReference, 'initialize_2')) {
                         $this->integrationHelper->setLastReference($initialize2Transaction->reference);
                         $response = json_decode($initialize2Transaction->response, true);
-                        echo '<script>setInterval(function(){try{window.santanderHireFinishedPaymentPlan(true, "' . $response["CRITERION_SANTANDER_HP_PDF_URL"] . '");}catch(err){}}, 10);</script>';
-                        die;
+                        /** @var \Magento\Framework\Controller\Result\Raw $_response */
+                        $_response = $this->resultFactory->create(ResultFactory::TYPE_RAW);
+                        $_response->setContents('<script>setInterval(function(){try{window.santanderHireFinishedPaymentPlan(true, "' . $response["CRITERION_SANTANDER_HP_PDF_URL"] . '");}catch(err){}}, 10);</script>');
+                        return $_response;
                     }
-                    echo '<script>window.close()</script>';
-                    die;
+                    /** @var \Magento\Framework\Controller\Result\Raw $_response */
+                    $_response = $this->resultFactory->create(ResultFactory::TYPE_RAW);
+                    $_response->setContents('<script>window.close()</script>');
+                    return $_response;
                 }
             }
         }
-        echo json_encode($return);
-        die;
+        /** @var \Magento\Framework\Controller\Result\Json $response */
+        $response = $this->resultFactory->create(ResultFactory::TYPE_JSON);
+        $response->setData($return);
+        return $response;
     }
 }

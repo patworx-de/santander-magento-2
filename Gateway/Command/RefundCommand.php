@@ -5,17 +5,20 @@ namespace SantanderPaymentSolutions\SantanderPayments\Gateway\Command;
 use Magento\Payment\Gateway\CommandInterface;
 use Magento\Sales\Model\Order\Payment\Transaction;
 use SantanderPaymentSolutions\SantanderPayments\Helper\IntegrationHelper;
+use SantanderPaymentSolutions\SantanderPayments\Helper\OrderHelper;
 use SantanderPaymentSolutions\SantanderPayments\Helper\TransactionHelper;
 
-class InvoiceCaptureCommand implements CommandInterface
+class RefundCommand implements CommandInterface
 {
     private $integrationHelper;
     private $transactionHelper;
+    private $orderHelper;
 
-    public function __construct(IntegrationHelper $integrationHelper, TransactionHelper $transactionHelper)
+    public function __construct(IntegrationHelper $integrationHelper, TransactionHelper $transactionHelper, OrderHelper $orderHelper)
     {
         $this->integrationHelper = $integrationHelper;
         $this->transactionHelper = $transactionHelper;
+        $this->orderHelper = $orderHelper;
     }
 
     public function execute(array $commandSubject)
@@ -24,28 +27,21 @@ class InvoiceCaptureCommand implements CommandInterface
 
         /** @var \Magento\Payment\Gateway\Data\PaymentDataObject $paymentDO */
         $paymentDO = $commandSubject['payment'];
+        $amount = $commandSubject['amount'];
         $order = $paymentDO->getOrder();
         $orderId = $order->getId();
-        //$amount = $commandSubject["amount"];
         /** @var \Magento\Sales\Model\Order\Payment $payment */
         $payment = $paymentDO->getPayment();
-        $reservation = $this->transactionHelper->getTransaction([
-            ['field' => 'orderId', 'value' => $orderId],
-            ['field' => 'type', 'value' => 'reservation'],
-            ['field' => 'status', 'value' => 'success']
-        ]);
+        $reservation = $this->transactionHelper->getTransaction('orderId', $orderId, 'reservation');
 
         if ($reservation->id) {
-
-            $result = $this->transactionHelper->finalize($reservation);
-            if (true || $result["isSuccess"]) {
+            $result = $this->transactionHelper->hybridRefund($reservation, $this->orderHelper->getBasketFromOrder($order, $amount), $amount);
+            if ($result["isSuccess"]) {
                 $payment->setTransactionId($reservation->uniqueId);
                 $payment->setTransactionAdditionalInfo('raw_response', json_encode($result));
-                $payment->addTransaction(Transaction::TYPE_CAPTURE);
-                $payment->setAdditionalInformation('bank', json_encode($result["response"]["connector"]));
+                $payment->addTransaction(Transaction::TYPE_REFUND);
                 $payment->setAdditionalInformation('response', json_encode($result["response"]));
                 $payment->save();
-
                 return true;
             } else {
                 throw new \Exception('Santander Error: ' . $result["responseJson"]);
@@ -53,7 +49,5 @@ class InvoiceCaptureCommand implements CommandInterface
         } else {
             throw new \Exception('Santander Error: No Reservation');
         }
-
     }
-
 }

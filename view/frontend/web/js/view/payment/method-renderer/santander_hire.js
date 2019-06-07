@@ -125,13 +125,13 @@ define(
                 }, function (initializeResponse) {
                     if (typeof initializeResponse !== 'object') {
                         initializeResponse = JSON.parse(initializeResponse);
+                    }
                         if (initializeResponse.redirect_url) {
                             window.santanderPlanChoosingWindow.location.href = initializeResponse.redirect_url;
                         } else {
-                            window.santanderPlanChoosingWindow.close();
-                            loader.stopLoader();
+                            window.santanderHireFinishedPaymentPlan(false);
                         }
-                    }
+
                 });
                 return false;
             },

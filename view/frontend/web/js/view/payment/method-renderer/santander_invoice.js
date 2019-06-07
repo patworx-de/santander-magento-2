@@ -92,7 +92,6 @@ define(
 
 
                 loader.startLoader();
-
                 if (self.validate() && additionalValidators.validate()) {
                     self.isPlaceOrderActionAllowed(false);
                     $.post(window.checkoutConfig.payment.santander_invoice.callback_url, {action: 'reauthorize_invoice'}, function (reauthorizeResponse) {

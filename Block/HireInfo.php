@@ -16,6 +16,7 @@ class HireInfo extends ConfigurableInfo
     protected function _prepareSpecificInformation($transport = null)
     {
         $transport = new DataObject();
+
         return $transport;
     }
 

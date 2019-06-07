@@ -25,19 +25,21 @@ final class InvoiceConfigProvider implements ConfigProviderInterface
     public function getConfig()
     {
         $response = $this->transactionHelper->authorize('invoice');
-        if (!empty($response["optinTexts"])) {
-            $this->integrationHelper->setLastReference($response["response"]["identification"]["transactionid"]);
-            return [
-                'payment' => [
-                    self::CODE => [
-                        'callback_url' => $this->configHelper->getCallbackUrl(),
-                        'privacy_optin' => $response["optinTexts"]["privacy_policy"],
-                        'additional_optin' => $response["optinTexts"]["optin"],
-                        'logo' => $response["optinTexts"]["logolink"]
+        if (!empty($response->responseArray["config"]["optin_text"])) {
+            if ($optInData = json_decode($response->responseArray["config"]["optin_text"], true)) {
+                $this->integrationHelper->setLastReference($response->responseArray["identification"]["transactionid"]);
+                return [
+                    'payment' => [
+                        self::CODE => [
+                            'callback_url'     => $this->configHelper->getCallbackUrl(),
+                            'privacy_optin'    => $optInData["privacy_policy"],
+                            'additional_optin' => $optInData["optin"],
+                            'logo'             => $optInData["logolink"]
+                        ]
                     ]
-                ]
-            ];
+                ];
+            }
         }
-        return null;
+        return [];
     }
 }

@@ -15,7 +15,7 @@ class InvoiceInfo extends ConfigurableInfo
 
     protected function _prepareSpecificInformation($transport = null)
     {
-        $transport = new DataObject();
+        $transport             = new DataObject();
         $additionalInformation = $this->getData("info")->getData("additional_information");
         if (!empty($additionalInformation["bank"])) {
             if ($bankInfo = json_decode($additionalInformation["bank"], true)) {

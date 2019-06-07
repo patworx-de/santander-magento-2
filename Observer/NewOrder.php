@@ -25,10 +25,12 @@ class NewOrder implements ObserverInterface
 
         $reference = $this->integrationHelper->getLastReference();
         if (!empty($reference)) {
-            $transactions = $this->transactionHelper->getTransactions([['field' => 'reference', 'value' => $reference], ['field' => 'orderId', 'value' => 0]]);
+            $transactions = $this->transactionHelper->getTransactions('reference', $reference, null, null);
             foreach ($transactions as $transaction) {
-                $transaction->orderId = $orderId;
-                $this->transactionHelper->saveTransaction($transaction);
+                if(empty($transaction->orderId)) {
+                    $transaction->orderId = $orderId;
+                    $this->transactionHelper->saveTransaction($transaction);
+                }
             }
         }
         $this->integrationHelper->setLastReference('');

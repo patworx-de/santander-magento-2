@@ -42,7 +42,7 @@
             <argument name="commands" xsi:type="array">
                 <item name="authorize" xsi:type="string">SantanderInvoiceAuthorizeCommand</item>
                 <item name="capture" xsi:type="string">SantanderInvoiceCaptureCommand</item>
-                <!--<item name="void" xsi:type="string">SantanderInvoiceVoidCommand</item>-->
+                <item name="refund" xsi:type="string">SantanderInvoiceRefundCommand</item>
             </argument>
         </arguments>
     </virtualType>
@@ -51,7 +51,11 @@
 
     </virtualType>
     <virtualType name="SantanderInvoiceCaptureCommand"
-                 type="SantanderPaymentSolutions\SantanderPayments\Gateway\Command\InvoiceCaptureCommand">
+                 type="SantanderPaymentSolutions\SantanderPayments\Gateway\Command\CaptureCommand">
+
+    </virtualType>
+    <virtualType name="SantanderInvoiceRefundCommand"
+                 type="SantanderPaymentSolutions\SantanderPayments\Gateway\Command\RefundCommand">
 
     </virtualType>
     <type name="SantanderPaymentSolutions\SantanderPayments\Block\InvoiceInfo">
@@ -111,7 +115,7 @@
             <argument name="commands" xsi:type="array">
                 <item name="authorize" xsi:type="string">SantanderHireAuthorizeCommand</item>
                 <item name="capture" xsi:type="string">SantanderHireCaptureCommand</item>
-                <!--<item name="void" xsi:type="string">SantanderHireVoidCommand</item>-->
+                <item name="refund" xsi:type="string">SantanderHireRefundCommand</item>
             </argument>
         </arguments>
     </virtualType>
@@ -120,7 +124,11 @@
 
     </virtualType>
     <virtualType name="SantanderHireCaptureCommand"
-                 type="SantanderPaymentSolutions\SantanderPayments\Gateway\Command\HireCaptureCommand">
+                 type="SantanderPaymentSolutions\SantanderPayments\Gateway\Command\CaptureCommand">
+
+    </virtualType>
+    <virtualType name="SantanderHireRefundCommand"
+                 type="SantanderPaymentSolutions\SantanderPayments\Gateway\Command\RefundCommand">
 
     </virtualType>
     <type name="SantanderPaymentSolutions\SantanderPayments\Block\HireInfo">

@@ -5,7 +5,7 @@
         <section id="payment">
             <group id="santander_invoice" translate="label" type="text" sortOrder="1" showInDefault="1"
                    showInWebsite="1" showInStore="1">
-                <label>Santander Rechnungskauf<img src="https://santander.shop-profis.de/magento/2.x/pub/static/version1550951415/frontend/Magento/luma/de_DE/images/logo.svg" /></label>
+                <label>Santander Rechnungskauf</label>
                 <field id="active" translate="label" type="select" sortOrder="100" showInDefault="1" showInWebsite="1"
                        showInStore="0">
                     <label>Aktiv</label>
@@ -31,6 +31,19 @@
                        showInStore="0">
                     <label>Live-Modus</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="min_order_total" translate="label" type="text" sortOrder="610" showInDefault="1" showInWebsite="1"
+                       showInStore="0">
+                    <label>Mindestbetrag</label>
+                </field>
+                <field id="max_order_total" translate="label" type="text" sortOrder="620" showInDefault="1" showInWebsite="1"
+                       showInStore="0">
+                    <label>Höchstbetrag</label>
+                </field>
+                <field id="finalize_status" translate="label" type="select" sortOrder="650" showInDefault="1" showInWebsite="1"
+                       showInStore="0">
+                    <label>Auftragsstatus zur Aktivierung der Zahlung</label>
+                    <source_model>Magento\Sales\Model\Config\Source\Order\Status</source_model>
                 </field>
                 <field id="sort_order" translate="label" type="text" sortOrder="700" showInDefault="1" showInWebsite="1"
                        showInStore="0">
@@ -66,6 +79,19 @@
                        showInStore="0">
                     <label>Live-Modus</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="min_order_total" translate="label" type="text" sortOrder="610" showInDefault="1" showInWebsite="1"
+                       showInStore="0">
+                    <label>Mindestbetrag</label>
+                </field>
+                <field id="max_order_total" translate="label" type="text" sortOrder="620" showInDefault="1" showInWebsite="1"
+                       showInStore="0">
+                    <label>Höchstbetrag</label>
+                </field>
+                <field id="finalize_status" translate="label" type="select" sortOrder="650" showInDefault="1" showInWebsite="1"
+                       showInStore="0">
+                    <label>Auftragsstatus zur Aktivierung der Zahlung</label>
+                    <source_model>Magento\Sales\Model\Config\Source\Order\Status</source_model>
                 </field>
                 <field id="sort_order" translate="label" type="text" sortOrder="700" showInDefault="1" showInWebsite="1"
                        showInStore="0">

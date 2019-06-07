@@ -4,8 +4,12 @@ namespace SantanderPaymentSolutions\SantanderPayments\Helper;
 
 use Magento\Checkout\Model\Session;
 use Magento\Quote\Model\Quote;
+use SantanderPaymentSolutions\SantanderPayments\Library\Interfaces\CheckoutHelperInterface;
+use SantanderPaymentSolutions\SantanderPayments\Library\Struct\Address;
+use SantanderPaymentSolutions\SantanderPayments\Library\Struct\BasketItem;
+use SantanderPaymentSolutions\SantanderPayments\Library\Struct\BasketOverview;
 
-class CheckoutHelper
+class CheckoutHelper implements CheckoutHelperInterface
 {
     /**
      * @var \Magento\Quote\Model\Quote $quote
@@ -19,54 +23,64 @@ class CheckoutHelper
         $this->checkoutSession = $checkoutSession;
     }
 
+    /**
+     * @return \SantanderPaymentSolutions\SantanderPayments\Library\Struct\BasketOverview
+     */
     public function getBasketOverview()
     {
+
         $quote = $this->checkoutSession->getQuote();
         $vat = $quote->getGrandTotal() - $quote->getSubtotal();
-
-        return [
-            'customer_id' => 1, //TODO
-            'amount' => $quote->getGrandTotal(),
-            'amount_net' => $quote->getSubtotal(),
-            'vat' => $vat,
-            'currency' => ($quote->getQuoteCurrencyCode() ? $quote->getQuoteCurrencyCode() : 'EUR')
-        ];
+        return new BasketOverview([
+            'amount'           => $quote->getGrandTotal(),
+            'vat'              => $vat,
+            'amountNet'        => $quote->getGrandTotal()-$vat,
+            'currency'         => ($quote->getQuoteCurrencyCode() ? $quote->getQuoteCurrencyCode() : 'EUR'),
+            'customerId'       => 0, //TODO
+            'isGuest'          => null, //TODO
+            'registrationDate' => null, //TODO
+            'numberOfOrders'   => 0 //TODO
+        ]);
     }
 
+    /**
+     * @return array|\SantanderPaymentSolutions\SantanderPayments\Library\Struct\BasketItem[]
+     */
     public function getBasketItems()
     {
         $items = [];
-        /** @var \Magento\Quote\Model\Quote\Item $item */
-        foreach ($this->checkoutSession->getQuote()->getAllItems() as $item) {
-            if ($price = $item->getPriceInclTax()) {
-                $items[] = [
-                    'name' => $item->getName(),
-                    'price' => $price,
-                    'vat' => 0,
-                    'quantity' => $item->getQty(),
-                    'id' => $item->getSku()
-                ];
+        /** @var \Magento\Quote\Model\Quote\Item $cartItem */
+        foreach ($this->checkoutSession->getQuote()->getAllItems() as $cartItem) {
+            if ($price = $cartItem->getPriceInclTax()) {
+                $item           = new BasketItem();
+                $item->name     = $cartItem->getName();
+                $item->id       = $cartItem->getSku();
+                $item->quantity = $cartItem->getQty();
+                $item->vat      = 0;
+                $item->price    = $price;
+                $items[]        = $item;
             }
         }
         return $items;
     }
 
-    public function getAddress()
+    public function getAddress($gender = null)
     {
         $quote = $this->checkoutSession->getQuote();
-        $address = $quote->getShippingAddress();
-
-        return [
-            'first_name' => $address->getFirstname(),
-            'last_name' => $address->getLastname(),
-            'company' => $address->getCompany(),
-            'street' => $address->getStreetFull(),
-            'zip' => $address->getPostcode(),
-            'city' => $address->getCity(),
-            'country' => $address->getCountryModel()->getCountryId(),
-            'email' => $address->getEmail()
-        ];
-
+        if ($address = $quote->getBillingAddress()) {
+            return new Address([
+                'firstName' => $address->getFirstname(),
+                'lastName'  => $address->getLastname(),
+                'company'   => $address->getCompany(),
+                'street'    => $address->getStreetFull(),
+                'postcode'  => $address->getPostcode(),
+                'city'      => $address->getCity(),
+                'country'   => $address->getCountryModel()->getCountryId(),
+                'email'     => $address->getEmail(),
+                'gender'    => $gender
+            ]);
+        }
+        return new Address([]);
     }
 }
 

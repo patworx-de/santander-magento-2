@@ -3,4 +3,7 @@
     <event name="checkout_submit_all_after">
         <observer name="santander_payment_solutions_new_order_observer" instance="SantanderPaymentSolutions\SantanderPayments\Observer\NewOrder" />
     </event>
+    <event name="sales_order_save_after">
+        <observer name="santander_payment_solutions_order_status_observer" instance="SantanderPaymentSolutions\SantanderPayments\Observer\OrderStatus" />
+    </event>
 </config>

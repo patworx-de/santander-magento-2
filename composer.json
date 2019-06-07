@@ -1,6 +1,6 @@
 {
-  "name": "santander-payment-solutions/magento-2",
-  "description": "",
+  "name": "patworx-de/santander-magento-2",
+  "description": "The official Santander Payment Solutions package",
   "require": {
     "php": "~5.6.0|~7.0.0|~7.1.0|~7.2.0",
     "magento/module-config": "^100.0.0 | ^101.0.0 | ^102.0.0",
@@ -23,7 +23,8 @@
     }
   ],
   "type": "magento2-module",
-  "license": "proprietary",
+  "license": "MIT",
+  "version": "1.1.0",
   "autoload": {
     "files": [
       "registration.php"
@@ -33,8 +34,8 @@
     }
   },
   "support": {
-    "email": ""
+    "email": "service@patworx.de"
   },
-  "homepage": "",
+  "homepage": "https://www.patworx.de/santander/",
   "keywords": []
 }

@@ -3,6 +3,7 @@
 namespace SantanderPaymentSolutions\SantanderPayments\Helper;
 
 use Magento\Checkout\Model\Session;
+use Magento\Framework\App\ObjectManager;
 use Magento\Quote\Model\Quote;
 use SantanderPaymentSolutions\SantanderPayments\Library\Interfaces\CheckoutHelperInterface;
 use SantanderPaymentSolutions\SantanderPayments\Library\Struct\Address;
@@ -19,7 +20,7 @@ class CheckoutHelper implements CheckoutHelperInterface
 
     public function __construct(Quote $quote, Session $checkoutSession)
     {
-        $this->quote = $quote;
+        $this->quote           = $quote;
         $this->checkoutSession = $checkoutSession;
     }
 
@@ -29,15 +30,26 @@ class CheckoutHelper implements CheckoutHelperInterface
     public function getBasketOverview()
     {
 
-        $quote = $this->checkoutSession->getQuote();
-        $vat = $quote->getGrandTotal() - $quote->getSubtotal();
+        $quote           = $this->checkoutSession->getQuote();
+        $vat             = $quote->getGrandTotal() - $quote->getSubtotal();
+        $objectManager   = ObjectManager::getInstance();
+        $customerSession = $objectManager->get('Magento\Customer\Model\Session');
+        $customerId      = 0;
+        $isGuest         = true;
+        if ($customerSession->isLoggedIn()) {
+            /** @var \Magento\Customer\Model\Customer $customer */
+            $customer   = $customerSession->getCustomer();
+            $customerId = $customer->getId();
+            $isGuest    = false;
+        }
+
         return new BasketOverview([
             'amount'           => $quote->getGrandTotal(),
             'vat'              => $vat,
-            'amountNet'        => $quote->getGrandTotal()-$vat,
+            'amountNet'        => $quote->getGrandTotal() - $vat,
             'currency'         => ($quote->getQuoteCurrencyCode() ? $quote->getQuoteCurrencyCode() : 'EUR'),
-            'customerId'       => 0, //TODO
-            'isGuest'          => null, //TODO
+            'customerId'       => $customerId,
+            'isGuest'          => $isGuest,
             'registrationDate' => null, //TODO
             'numberOfOrders'   => 0 //TODO
         ]);
@@ -56,11 +68,12 @@ class CheckoutHelper implements CheckoutHelperInterface
                 $item->name     = $cartItem->getName();
                 $item->id       = $cartItem->getSku();
                 $item->quantity = $cartItem->getQty();
-                $item->vat      = 0;
+                $item->vat      = $cartItem->getTaxPercent();
                 $item->price    = $price;
                 $items[]        = $item;
             }
         }
+
         return $items;
     }
 
@@ -80,8 +93,34 @@ class CheckoutHelper implements CheckoutHelperInterface
                 'gender'    => $gender
             ]);
         }
+
         return new Address([]);
     }
+
+    public function isAddressOk()
+    {
+        $quote = $this->checkoutSession->getQuote();
+        if (($billingAddress = $quote->getBillingAddress()) && ($shippingAddress = $quote->getShippingAddress())) {
+            return (
+                empty($billingAddress->getCompany())
+                &&
+                empty($shippingAddress->getCompany())
+                &&
+                $billingAddress->getFirstname() === $shippingAddress->getFirstname()
+                &&
+                $billingAddress->getLastname() === $shippingAddress->getLastname()
+                &&
+                $billingAddress->getStreetFull() === $shippingAddress->getStreetFull()
+                &&
+                $billingAddress->getPostcode() === $shippingAddress->getPostcode()
+                &&
+                $billingAddress->getCountryId() === $shippingAddress->getCountryId()
+            );
+        }
+
+        return false;
+    }
+
 }
 
 

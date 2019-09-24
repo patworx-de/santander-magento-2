@@ -41,7 +41,7 @@ class OrderHelper implements OrderHelperInterface
                 $basketItem->name     = $item->getName();
                 $basketItem->quantity = $item->getQtyOrdered();
                 $basketItem->price    = $item->getPriceInclTax();
-                $basketItem->vat      = $item->getTaxAmount();
+                $basketItem->vat      = $item->getTaxPercent();
                 $basketItems[]        = $basketItem;
             }
 

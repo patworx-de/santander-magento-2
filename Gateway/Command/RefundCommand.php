@@ -27,20 +27,26 @@ class RefundCommand implements CommandInterface
 
         /** @var \Magento\Payment\Gateway\Data\PaymentDataObject $paymentDO */
         $paymentDO = $commandSubject['payment'];
-        $amount = $commandSubject['amount'];
+        /** @var \Magento\Payment\Gateway\Data\Order\OrderAdapter $order */
         $order = $paymentDO->getOrder();
         $orderId = $order->getId();
         /** @var \Magento\Sales\Model\Order\Payment $payment */
         $payment = $paymentDO->getPayment();
         $reservation = $this->transactionHelper->getTransaction('orderId', $orderId, 'reservation');
 
+        if(isset($commandSubject['amount'])) {
+            $amount = $commandSubject['amount'];
+        }else{
+            $amount = $this->orderHelper->getOpenAmount($reservation->reference);
+        }
+
         if ($reservation->id) {
-            $result = $this->transactionHelper->hybridRefund($reservation, $this->orderHelper->getBasketFromOrder($order, $amount), $amount);
-            if ($result["isSuccess"]) {
+            $result = $this->transactionHelper->hybridRefund($reservation, $amount, $this->orderHelper->getBasketFromOrder($order, $amount));
+            if ($result !== null && $result->isSuccess) {
                 $payment->setTransactionId($reservation->uniqueId);
                 $payment->setTransactionAdditionalInfo('raw_response', json_encode($result));
                 $payment->addTransaction(Transaction::TYPE_REFUND);
-                $payment->setAdditionalInformation('response', json_encode($result["response"]));
+                $payment->setAdditionalInformation('response', json_encode($result->responseArray));
                 $payment->save();
                 return true;
             } else {

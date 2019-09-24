@@ -143,6 +143,22 @@ class UpgradeSchema implements UpgradeSchemaInterface
                 ]
             );
         $setup->getConnection()->createTable($table);
+
+
+        if(version_compare($context->getVersion(), '1.2.0', '<')) {
+            $setup->getConnection()->addColumn(
+                $setup->getTable( 'santander_transactions' ),
+                'transaction_comment',
+                [
+                    'type'=>Table::TYPE_TEXT,
+                    'size'=>200,
+                    'nullable' => true,
+                    'comment'=>'Additional transaction comment'
+                ]
+            );
+        }
+
+
         $setup->endSetup();
 
     }

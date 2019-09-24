@@ -20,8 +20,8 @@ abstract class Base {
 	 * @param array $array
 	 */
 	public function fromArray( array $array ) {
-		foreach ( $array as $k => $v ) {
-			$this->{$k} = $v;
+		foreach ( $array as $field => $v ) {
+			$this->{$field} = $v;
 		}
 	}
 

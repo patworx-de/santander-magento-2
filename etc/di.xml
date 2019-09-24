@@ -43,6 +43,8 @@
                 <item name="authorize" xsi:type="string">SantanderInvoiceAuthorizeCommand</item>
                 <item name="capture" xsi:type="string">SantanderInvoiceCaptureCommand</item>
                 <item name="refund" xsi:type="string">SantanderInvoiceRefundCommand</item>
+                <item name="cancel" xsi:type="string">SantanderInvoiceRefundCommand</item>
+                <item name="void" xsi:type="string">SantanderInvoiceRefundCommand</item>
             </argument>
         </arguments>
     </virtualType>
@@ -116,6 +118,8 @@
                 <item name="authorize" xsi:type="string">SantanderHireAuthorizeCommand</item>
                 <item name="capture" xsi:type="string">SantanderHireCaptureCommand</item>
                 <item name="refund" xsi:type="string">SantanderHireRefundCommand</item>
+                <item name="cancel" xsi:type="string">SantanderHireRefundCommand</item>
+                <item name="void" xsi:type="string">SantanderHireRefundCommand</item>
             </argument>
         </arguments>
     </virtualType>

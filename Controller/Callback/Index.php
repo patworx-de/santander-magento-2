@@ -113,6 +113,9 @@ class Index extends Action
                     if ($vars["IDENTIFICATION_UNIQUEID"]) {
                         $transaction->uniqueId = $vars["IDENTIFICATION_UNIQUEID"];
                     }
+                    if ($vars["PROCESSING_RETURN"]) {
+                        $transaction->transactionComment = $vars["PROCESSING_RETURN"] . ' (' . $vars["PROCESSING_REASON"] . ')';
+                    }
                     $this->transactionHelper->saveTransaction($transaction);
                 }
             }

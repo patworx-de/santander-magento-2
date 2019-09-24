@@ -26,10 +26,7 @@ class CountryValidator extends AbstractValidator
     {
         $isValid = in_array($validationSubject['country'], $this->countries);
         if($isValid){
-            $address = $this->checkoutHelper->getAddress();
-            if(!empty($address->company)){
-                $isValid = false;
-            }
+            $isValid = $this->checkoutHelper->isAddressOk();
         }
         return $this->createResult($isValid);
     }

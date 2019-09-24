@@ -7,10 +7,10 @@ use Heidelpay\PhpBasketApi\Object\BasketItem;
 use Heidelpay\PhpBasketApi\Request as BasketRequest;
 use Heidelpay\PhpPaymentApi\PaymentMethods\SantanderHirePurchasePaymentMethod;
 use Heidelpay\PhpPaymentApi\PaymentMethods\SantanderInvoicePaymentMethod;
+use SantanderPaymentSolutions\SantanderPayments\Library\Classes\XmlApiClient;
 use SantanderPaymentSolutions\SantanderPayments\Library\Struct\BasketOverview;
 use SantanderPaymentSolutions\SantanderPayments\Library\Struct\CallResult;
 use SantanderPaymentSolutions\SantanderPayments\Library\Struct\Transaction;
-
 
 trait TransactionHelper
 {
@@ -148,8 +148,8 @@ trait TransactionHelper
 
         $basket = new Basket();
         $request->setBasket($basket);
-        $basket->setAmountTotalNet((int)($basketOverview->amountNet * 100));
-        $basket->setAmountTotalVat((int)($basketOverview->vat * 100));
+        $basket->setAmountTotalNet((int)round($basketOverview->amountNet * 100));
+        $basket->setAmountTotalVat((int)round($basketOverview->vat * 100));
         $basket->setCurrencyCode($basketOverview->currency);
         $remainingAmount = $basketOverview->amount;
         $position        = 1;
@@ -158,12 +158,12 @@ trait TransactionHelper
             $basketItem = new BasketItem();
             $basketItem->setPosition($position++);
             $basketItem->setTitle($item->name);
-            $basketItem->setAmountGross((int)($item->price * 100));
-            $basketItem->setVat((int)$item->vat * 100);
-            $basketItem->setAmountNet((int)($item->price * 100));
-            $basketItem->setQuantity((int)$item->quantity);
+            $basketItem->setAmountGross((int)round($item->price * $item->quantity * 100));
+            $basketItem->setVat((int)round($item->vat));
+            $basketItem->setAmountNet((int)round(($item->price / (100 + $item->vat) * 100) * $item->quantity * 100));
+            $basketItem->setQuantity((int)round($item->quantity));
             $basketItem->setBasketItemReferenceId($item->id . '_' . uniqid());
-            $basketItem->setAmountPerUnit(1);
+            $basketItem->setAmountPerUnit((int)round($item->price * 100));
             $basket->addBasketItem($basketItem);
             $remainingAmount -= $item->price * $item->quantity;
         }
@@ -172,12 +172,12 @@ trait TransactionHelper
             $basketItem = new BasketItem();
             $basketItem->setPosition($position);
             $basketItem->setTitle('---');
-            $basketItem->setAmountGross((int)($remainingAmount * 100));
+            $basketItem->setAmountGross((int)round($remainingAmount * 100));
             $basketItem->setVat(0);
-            $basketItem->setAmountNet((int)($remainingAmount * 100));
+            $basketItem->setAmountNet((int)round($remainingAmount * 100));
             $basketItem->setQuantity(1);
             $basketItem->setBasketItemReferenceId('final_' . uniqid());
-            $basketItem->setAmountPerUnit(1);
+            $basketItem->setAmountPerUnit((int)round($remainingAmount * 100));
             $basket->addBasketItem($basketItem);
 
         }
@@ -388,10 +388,9 @@ trait TransactionHelper
     public function hybridRefund(Transaction $reservation, $amount, $basketId)
     {
         $result = $this->reversal($reservation, $amount, $basketId);
-        if (!$result->isSuccess) {
+        if ($result === null || !$result->isSuccess) {
             $result = $this->refund($reservation, $amount, $basketId);
         }
-
         return $result;
     }
 
@@ -420,20 +419,23 @@ trait TransactionHelper
     public function refund(Transaction $reservation, $amount, $basketId)
     {
         if ($reservation) {
-            return $this->call(
-                $reservation->method,
-                'refund',
-                [
-                    'unique_id'       => $reservation->uniqueId,
-                    'order_id'        => $reservation->orderId,
-                    'reference'       => $reservation->reference,
-                    'basket_overview' => new BasketOverview([
-                        'currency' => $reservation->currency,
-                        'amount'   => $amount
-                    ]),
-                    'basket_id'       => $basketId
-                ]
-            );
+            $xmlApiClient = new XmlApiClient($reservation->method, $this->configHelper);
+            if ($uniqueId = $xmlApiClient->getReceivedPaymentUniqueId($reservation->uniqueId)) {
+                return $this->call(
+                    $reservation->method,
+                    'refund',
+                    [
+                        'unique_id'       => $uniqueId,
+                        'order_id'        => $reservation->orderId,
+                        'reference'       => $reservation->reference,
+                        'basket_overview' => new BasketOverview([
+                            'currency' => $reservation->currency,
+                            'amount'   => $amount
+                        ]),
+                        'basket_id'       => $basketId
+                    ]
+                );
+            }
         }
 
         return null;

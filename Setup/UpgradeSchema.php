@@ -23,7 +23,7 @@ class UpgradeSchema implements UpgradeSchemaInterface
                 [
                     'identity' => true,
                     'unsigned' => true,
-                    'primary' => true,
+                    'primary'  => true,
                     'nullable' => false
                 ]
             )
@@ -144,20 +144,18 @@ class UpgradeSchema implements UpgradeSchemaInterface
             );
         $setup->getConnection()->createTable($table);
 
-
-        if(version_compare($context->getVersion(), '1.2.0', '<')) {
+        if (version_compare($context->getVersion(), '1.2.0', '<')) {
             $setup->getConnection()->addColumn(
-                $setup->getTable( 'santander_transactions' ),
+                $setup->getTable('santander_transactions'),
                 'transaction_comment',
                 [
-                    'type'=>Table::TYPE_TEXT,
-                    'size'=>200,
+                    'type'     => Table::TYPE_TEXT,
+                    'size'     => 200,
                     'nullable' => true,
-                    'comment'=>'Additional transaction comment'
+                    'comment'  => 'Additional transaction comment'
                 ]
             );
         }
-
 
         $setup->endSetup();
 

@@ -85,11 +85,13 @@ define(
                     }
                     catch (err) {
                     }
-
-                    if (!window.santanderPlanChoosingWindow.finished) {
-                        if (window.santanderPlanChoosingWindow.closed) {
-                            window.santanderHireFinishedPaymentPlan(false);
+                    try {
+                        if (!window.santanderPlanChoosingWindow.finished) {
+                            if (window.santanderPlanChoosingWindow.closed) {
+                                window.santanderHireFinishedPaymentPlan(false);
+                            }
                         }
+                    } catch (err) {
                     }
                 }, 200);
                 loader.startLoader();
@@ -126,11 +128,11 @@ define(
                     if (typeof initializeResponse !== 'object') {
                         initializeResponse = JSON.parse(initializeResponse);
                     }
-                        if (initializeResponse.redirect_url) {
-                            window.santanderPlanChoosingWindow.location.href = initializeResponse.redirect_url;
-                        } else {
-                            window.santanderHireFinishedPaymentPlan(false);
-                        }
+                    if (initializeResponse.redirect_url) {
+                        window.santanderPlanChoosingWindow.location.href = initializeResponse.redirect_url;
+                    } else {
+                        window.santanderHireFinishedPaymentPlan(false);
+                    }
 
                 });
                 return false;

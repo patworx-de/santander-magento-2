@@ -4,13 +4,16 @@ namespace SantanderPaymentSolutions\SantanderPayments\Controller\Callback;
 
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
+use Magento\Framework\App\CsrfAwareActionInterface;
+use Magento\Framework\App\Request\InvalidRequestException;
+use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\View\Result\PageFactory;
 use SantanderPaymentSolutions\SantanderPayments\Helper\IntegrationHelper;
 use SantanderPaymentSolutions\SantanderPayments\Helper\TransactionHelper;
 use SantanderPaymentSolutions\SantanderPayments\Library\Struct\Transaction;
 
-class Index extends Action
+class Index extends Action implements CsrfAwareActionInterface
 {
     protected $_pageFactory;
     private $integrationHelper;
@@ -45,6 +48,7 @@ class Index extends Action
             /** @var \Magento\Framework\Controller\Result\Json $response */
             $response = $this->resultFactory->create(ResultFactory::TYPE_JSON);
             $response->setData($return);
+
             return $response;
         } elseif (!empty($vars["action"]) && $vars["action"] == 'initialize_hire') {
             $response = $this->transactionHelper->initialize('hire', $vars["NAME_BIRTHDATE"]);
@@ -57,6 +61,7 @@ class Index extends Action
             /** @var \Magento\Framework\Controller\Result\Json $response */
             $response = $this->resultFactory->create(ResultFactory::TYPE_JSON);
             $response->setData($return);
+
             return $response;
         } elseif (!empty($vars["action"]) && $vars["action"] == 'authorize_on_registration') {
             $return = ['success' => 0];
@@ -73,6 +78,7 @@ class Index extends Action
             /** @var \Magento\Framework\Controller\Result\Json $response */
             $response = $this->resultFactory->create(ResultFactory::TYPE_JSON);
             $response->setData($return);
+
             return $response;
         } elseif (!empty($vars["IDENTIFICATION_TRANSACTIONID"])) {
             return $this->ipnAction($vars);
@@ -84,7 +90,7 @@ class Index extends Action
     private function ipnAction($vars)
     {
         $this->integrationHelper->log('info', __CLASS__ . '..' . __METHOD__ . '::' . __LINE__, 'IPN received', $vars);
-        $reference          = $vars["IDENTIFICATION_TRANSACTIONID"];
+        $reference = $vars["IDENTIFICATION_TRANSACTIONID"];
         if ($initialTransaction = $this->transactionHelper->getByReference($reference)) {
             if (round($initialTransaction->amount, 2) == round($vars["PRESENTATION_AMOUNT"], 2)) {
                 if ($vars["PAYMENT_CODE"] === 'HP.PA') {
@@ -126,6 +132,7 @@ class Index extends Action
         /** @var \Magento\Framework\Controller\Result\Raw $_response */
         $_response = $this->resultFactory->create(ResultFactory::TYPE_RAW);
         $_response->setContents('IPN DONE');
+
         return $_response;
     }
 
@@ -134,25 +141,27 @@ class Index extends Action
         $return = ['success' => 0];
         $this->integrationHelper->log('info', __CLASS__ . '..' . __METHOD__ . '::' . __LINE__, 'customer frontend action', $vars);
         if ($cReference = $this->integrationHelper->getLastReference()) {
-            $return['reference'] = $cReference;
-            $transaction         = $this->transactionHelper->getByReference($cReference, null, null);
-            $method = $transaction->method;
+            $return['reference']    = $cReference;
+            $transaction            = $this->transactionHelper->getByReference($cReference, null, null);
+            $method                 = $transaction->method;
             $reservationTransaction = $this->transactionHelper->getByReference($cReference, 'reservation', null);
             if ($reservationTransaction && $reservationTransaction->status === 'success') {
                 $return["success"] = 1;
             } else {
                 if ($method === 'hire') {
-                    if ($initialize2Transaction =  $this->transactionHelper->getByReference($cReference, 'initialize_2')) {
+                    if ($initialize2Transaction = $this->transactionHelper->getByReference($cReference, 'initialize_2')) {
                         $this->integrationHelper->setLastReference($initialize2Transaction->reference);
                         $response = json_decode($initialize2Transaction->response, true);
                         /** @var \Magento\Framework\Controller\Result\Raw $_response */
                         $_response = $this->resultFactory->create(ResultFactory::TYPE_RAW);
                         $_response->setContents('<script>setInterval(function(){try{window.santanderHireFinishedPaymentPlan(true, "' . $response["CRITERION_SANTANDER_HP_PDF_URL"] . '");}catch(err){}}, 10);</script>');
+
                         return $_response;
                     }
                     /** @var \Magento\Framework\Controller\Result\Raw $_response */
                     $_response = $this->resultFactory->create(ResultFactory::TYPE_RAW);
                     $_response->setContents('<script>window.close()</script>');
+
                     return $_response;
                 }
             }
@@ -160,6 +169,18 @@ class Index extends Action
         /** @var \Magento\Framework\Controller\Result\Json $response */
         $response = $this->resultFactory->create(ResultFactory::TYPE_JSON);
         $response->setData($return);
+
         return $response;
+    }
+
+    public function createCsrfValidationException(
+        RequestInterface $request
+    ): ?InvalidRequestException {
+        return null;
+    }
+
+    public function validateForCsrf(RequestInterface $request): ?bool
+    {
+        return true;
     }
 }

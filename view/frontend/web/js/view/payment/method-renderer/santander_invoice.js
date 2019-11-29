@@ -57,6 +57,17 @@ define(
                 return years;
             },
 
+            getAge: function(birthDateString) {
+                var today = new Date();
+                var birthDate = new Date(birthDateString);
+                var age = today.getFullYear() - birthDate.getFullYear();
+                var m = today.getMonth() - birthDate.getMonth();
+                if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+                    age--;
+                }
+                return age;
+            },
+
             getData: function () {
                 return {
                     'method': this.item.method
@@ -84,10 +95,13 @@ define(
                 var birthdayMonthVal = $('#santander_invoice_birthday_m').val();
                 var birthdayYearVal = $('#santander_invoice_birthday_y').val();
 
-                if (!birthdayDayVal || !birthdayMonthVal || !birthdayYearVal) {
+                if (!birthdayDayVal || !birthdayMonthVal || !birthdayYearVal || self.getAge(birthdayYearVal + '-' + birthdayMonthVal + '-' + birthdayDayVal) < 18) {
                     alert('Bitte wählen Sie ein gültiges Geburtsdatum');
                     return false;
                 }
+
+
+
                 var defaultErrorMessage = 'Die von Ihnen gewählte Zahlungsart kann Ihnen leider nicht angeboten werden. Bitte wählen Sie eine andere Zahlungsart aus';
 
 

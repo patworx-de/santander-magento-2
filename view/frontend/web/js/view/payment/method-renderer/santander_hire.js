@@ -59,6 +59,17 @@ define(
                 return newWindow;
             },
 
+            getAge: function(birthDateString) {
+                var today = new Date();
+                var birthDate = new Date(birthDateString);
+                var age = today.getFullYear() - birthDate.getFullYear();
+                var m = today.getMonth() - birthDate.getMonth();
+                if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+                    age--;
+                }
+                return age;
+            },
+
 
             selectPaymentPlan: function () {
                 var self = this;
@@ -72,7 +83,7 @@ define(
                 var birthdayMonthVal = $('#santander_hire_birthday_m').val();
                 var birthdayYearVal = $('#santander_hire_birthday_y').val();
 
-                if (!birthdayDayVal || !birthdayMonthVal || !birthdayYearVal) {
+                if (!birthdayDayVal || !birthdayMonthVal || !birthdayYearVal || self.getAge(birthdayYearVal + '-' + birthdayMonthVal + '-' + birthdayDayVal) < 18) {
                     alert('Bitte wählen Sie ein gültiges Geburtsdatum');
                     return false;
                 }

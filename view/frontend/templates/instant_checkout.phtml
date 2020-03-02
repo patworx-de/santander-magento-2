@@ -1,0 +1,31 @@
+<link rel="stylesheet" href="https://api.xs2a.com/xs2a.css">
+<?php
+/**
+ * @var  \SantanderPaymentSolutions\SantanderPayments\Block\InstantCheckout $block
+ */
+?>
+<div id="XS2A-Form" data-xs2a="<?php echo $block->getSessionKey(); ?>"></div>
+<script>
+    if ("function" == typeof define && define.amd) {
+        var _amdBackup = define.amd;
+        define.amd = null;
+    }
+</script>
+<script src="https://api.xs2a.com/xs2a.js"></script>
+<script>
+    xs2a.finish(function () {
+        document.location.href = '<?php echo $block->getSuccessUrl();?>';
+    });
+    xs2a.abort(function () {
+        document.location.href = '<?php echo $block->getCancelUrl();?>';
+    });
+    xs2a.extend('login', function (form) {
+        form.checkbox('privacy', 'Ich willige in die Übermittlung meiner personenbezogenen Daten an die Santander Consumer Bank AG ein. Nähere Informationen finden Sie in den <a href="https://www.santander.de/static/datenschutzhinweise/direktueberweisung/" target="_blank">Datenschutzhinweisen</a> der Santander für die Direktüberweisung. *', true, form.APPEND);
+        form.checkbox('optin', 'Ich bin einverstanden, dass mich die Santander Consumer Bank AG und die Santander Consumer Leasing GmbH per E-Mail, telefonisch, per Brief oder per sonstiger elektronischer Kommunikationsdienste (SMS o.ä.) personalisiert über neue Services und interessante Produktangebote informieren können und stimme insoweit der Verarbeitung meiner personenbezogenen Daten zu (Details  hierzu siehe <a href="https://applications.santander.de/applications/rechnungskauf/werbehinweise" target="_blank">Santander Werbehinweise</a>). Dieses Einverständnis bezieht sich auf eigene und auf vermittelte Produkte und Services. Mir ist bewusst, dass ich dieses Einverständnis jederzeit widerrufen kann. Sie haben das Recht, auch ohne Einwilligung zulässiger Werbung jederzeit zu widersprechen (Details hierzu siehe <a href="https://applications.santander.de/applications/rechnungskauf/werbehinweise" target="_blank">Santander Werbehinweise</a> Ziffer III).', false, form.APPEND);
+        form.description('* Pflichtfeld', form.APPEND);
+    });
+    xs2a.init();
+    if (_amdBackup) {
+        define.amd = _amdBackup;
+    }
+</script>

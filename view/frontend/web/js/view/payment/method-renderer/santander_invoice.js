@@ -10,7 +10,6 @@ define(
     ],
     function (Component, additionalValidators, redirectOnSuccessAction, loader, $) {
         'use strict';
-        console.log('invoice init');
         return Component.extend({
             defaults: {
                 template: 'SantanderPaymentSolutions_SantanderPayments/payment/invoice_form'

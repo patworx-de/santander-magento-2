@@ -10,7 +10,6 @@ define(
     ],
     function (Component, additionalValidators, redirectOnSuccessAction, loader, $) {
         'use strict';
-        console.log('hire init');
         return Component.extend({
             defaultErrorMessage: 'Die von Ihnen gewählte Zahlungsart kann Ihnen leider nicht angeboten werden. Bitte wählen Sie eine andere Zahlungsart aus',
             defaults: {

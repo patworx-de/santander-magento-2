@@ -49,6 +49,14 @@ class IntegrationHelper
 
     }
 
+    public function setInstantTransactionId($transactionId){
+        $this->session->setSantanderInstantTransactionId($transactionId);
+    }
+
+    public function getInstantTransactionId(){
+        return $this->session->getSantanderInstantTransactionId();
+    }
+
 }
 
 

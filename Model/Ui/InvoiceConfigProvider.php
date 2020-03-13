@@ -7,7 +7,6 @@ use SantanderPaymentSolutions\SantanderPayments\Helper\ConfigHelper;
 use SantanderPaymentSolutions\SantanderPayments\Helper\IntegrationHelper;
 use SantanderPaymentSolutions\SantanderPayments\Helper\TransactionHelper;
 
-
 final class InvoiceConfigProvider implements ConfigProviderInterface
 {
     const CODE = 'santander_invoice';
@@ -19,7 +18,7 @@ final class InvoiceConfigProvider implements ConfigProviderInterface
     {
         $this->transactionHelper = $transactionHelper;
         $this->integrationHelper = $integrationHelper;
-        $this->configHelper = $configHelper;
+        $this->configHelper      = $configHelper;
     }
 
     public function getConfig()
@@ -28,18 +27,25 @@ final class InvoiceConfigProvider implements ConfigProviderInterface
         if (!empty($response->responseArray["config"]["optin_text"])) {
             if ($optInData = json_decode($response->responseArray["config"]["optin_text"], true)) {
                 $this->integrationHelper->setLastReference($response->responseArray["identification"]["transactionid"]);
+
+                if (!empty($response->originalResponseArray["CONFIG_OPTIN_TEXT_SCB_2"])) {
+                    if ($optInDataNew = json_decode(str_replace("\n", " ", $response->originalResponseArray["CONFIG_OPTIN_TEXT_SCB_2"]), true)) {
+                        $newOptin = $optInDataNew ['optin'];
+                    }
+                }
+
                 return [
                     'payment' => [
                         self::CODE => [
-                            'callback_url'     => $this->configHelper->getCallbackUrl(),
-                            'privacy_optin'    => $optInData["privacy_policy"],
-                            'additional_optin' => $optInData["optin"],
-                            'logo'             => $optInData["logolink"]
+                            'callback_url'  => $this->configHelper->getCallbackUrl(),
+                            'logo'          => $optInData["logolink"],
+                            'privacy_optin' => (!empty($newOptin) ? $newOptin : $optInData["privacy_policy"])
                         ]
                     ]
                 ];
             }
         }
+
         return [];
     }
 }

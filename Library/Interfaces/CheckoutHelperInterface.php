@@ -18,4 +18,10 @@ interface CheckoutHelperInterface{
      * @return \SantanderPaymentSolutions\SantanderPayments\Library\Struct\Address
      */
     public function getAddress($gender = null);
+
+    /**
+     * @return string
+     */
+    public function getSessionIdentifier();
+
 }

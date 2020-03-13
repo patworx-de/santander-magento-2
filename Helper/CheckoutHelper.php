@@ -97,6 +97,10 @@ class CheckoutHelper implements CheckoutHelperInterface
         return new Address([]);
     }
 
+    public function getSessionIdentifier(){
+        return $this->checkoutSession->getSessionId().'_'.round($this->getBasketOverview()->amount*100).'_'.md5(serialize($this->getAddress()->toArray()));
+    }
+
     public function isAddressOk()
     {
         $quote = $this->checkoutSession->getQuote();

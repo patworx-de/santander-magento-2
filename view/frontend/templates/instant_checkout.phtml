@@ -1,0 +1,29 @@
+<link rel="stylesheet" href="https://api.xs2a.com/xs2a.css">
+<?php
+/**
+ * @var  \SantanderPaymentSolutions\SantanderPayments\Block\InstantCheckout $block
+ */
+?>
+<div id="XS2A-Form" data-xs2a="<?php echo $block->getSessionKey(); ?>"></div>
+<script>
+    if ("function" == typeof define && define.amd) {
+        var _amdBackup = define.amd;
+        define.amd = null;
+    }
+</script>
+<script src="https://api.xs2a.com/xs2a.js"></script>
+<script>
+    xs2a.finish(function () {
+        document.location.href = '<?php echo $block->getSuccessUrl();?>';
+    });
+    xs2a.abort(function () {
+        document.location.href = '<?php echo $block->getCancelUrl();?>';
+    });
+    xs2a.extend('login', function (form) {
+        form.checkbox('optin', 'Das Anklicken des unten stehenden Buttons löst eine Übermittlung Ihrer personenbezogenen Daten an die Santander Consumer Bank AG zur Durchführung einer Direktüberweisung aus. Nähere Informationen finden Sie in den <a href="https://www.santander.de/static/datenschutzhinweise/direktueberweisung/" target="_blank">Datenschutzhinweisen</a> der Santander zur Direktüberweisung. Der Kunde ist mit <a href="https://applications.santander.de/applications/rechnungskauf/werbehinweise" target="_blank">werblicher Kommunikation</a> durch die Santander einverstanden. Die Erteilung dieser Einwilligung ist freiwillig und kann jederzeit <a href="https://applications.santander.de/applications/rechnungskauf/werbehinweise" target="_blank">widerrufen</a> werden.', false, form.APPEND);
+    });
+    xs2a.init();
+    if (_amdBackup) {
+        define.amd = _amdBackup;
+    }
+</script>

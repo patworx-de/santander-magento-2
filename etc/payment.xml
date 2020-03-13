@@ -13,5 +13,8 @@
         <method name="santander_hire">
             <allow_multiple_address>0</allow_multiple_address>
         </method>
+        <method name="santander_instant">
+            <allow_multiple_address>1</allow_multiple_address>
+        </method>
     </methods>
 </payment>

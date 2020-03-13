@@ -15,6 +15,7 @@ class Transaction extends Base{
     public $status;
     public $reference;
     public $uniqueId;
+    public $sessionId;
     public $model;
     public $transactionComment;
 }

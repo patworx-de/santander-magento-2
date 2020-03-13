@@ -5,12 +5,12 @@ define(
         'Magento_Checkout/js/view/payment/default',
         'Magento_Checkout/js/model/payment/additional-validators',
         'Magento_Checkout/js/action/redirect-on-success',
+        'Magento_Checkout/js/action/get-payment-information',
         'Magento_Checkout/js/model/full-screen-loader',
         'jquery',
     ],
-    function (Component, additionalValidators, redirectOnSuccessAction, loader, $) {
+    function (Component, additionalValidators, redirectOnSuccessAction, getPaymentInformation, loader, $) {
         'use strict';
-        console.log('hire init');
         return Component.extend({
             defaultErrorMessage: 'Die von Ihnen gewählte Zahlungsart kann Ihnen leider nicht angeboten werden. Bitte wählen Sie eine andere Zahlungsart aus',
             defaults: {
@@ -205,6 +205,7 @@ define(
                                         );
                                     } else {
                                         alert(self.defaultErrorMessage);
+                                        getPaymentInformation();
                                         self.isPlaceOrderActionAllowed(true);
                                         loader.stopLoader();
                                     }

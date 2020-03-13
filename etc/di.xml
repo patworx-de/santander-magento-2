@@ -152,6 +152,70 @@
             <argument name="configInterface" xsi:type="object">SantanderHireConfig</argument>
         </arguments>
     </virtualType>
+
+
+    <virtualType name="SantanderInstantFacade" type="Magento\Payment\Model\Method\Adapter">
+        <arguments>
+            <argument name="code" xsi:type="const">
+                SantanderPaymentSolutions\SantanderPayments\Model\Ui\InstantConfigProvider::CODE
+            </argument>
+            <argument name="formBlockType" xsi:type="string">
+                Magento\Payment\Block\Form
+            </argument>
+            <argument name="infoBlockType" xsi:type="string">
+                SantanderPaymentSolutions\SantanderPayments\Block\InstantInfo
+            </argument>
+            <argument name="valueHandlerPool" xsi:type="object">SantanderInstantValueHandlerPool</argument>
+            <argument name="commandPool" xsi:type="object">SantanderInstantCommandPool</argument>
+        </arguments>
+    </virtualType>
+
+
+
+
+    <virtualType name="SantanderInstantConfig" type="Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="const">
+                SantanderPaymentSolutions\SantanderPayments\Model\Ui\InstantConfigProvider::CODE
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="SantanderInstantLogger" type="Magento\Payment\Model\Method\Logger">
+        <arguments>
+            <argument name="config" xsi:type="object">SantanderInstantConfig</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="SantanderInstantCommandPool" type="Magento\Payment\Gateway\Command\CommandPool">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <!--
+                <item name="authorize" xsi:type="string">SantanderInstantAuthorizeCommand</item>
+                <item name="capture" xsi:type="string">SantanderInstantCaptureCommand</item>
+                <item name="refund" xsi:type="string">SantanderInstantRefundCommand</item>
+                <item name="cancel" xsi:type="string">SantanderInstantRefundCommand</item>
+                <item name="void" xsi:type="string">SantanderInstantRefundCommand</item>
+                -->
+            </argument>
+        </arguments>
+    </virtualType>
+    <type name="SantanderPaymentSolutions\SantanderPayments\Block\InstantInfo">
+        <arguments>
+            <argument name="config" xsi:type="object">SantanderInstantConfig</argument>
+        </arguments>
+    </type>
+    <virtualType name="SantanderInstantValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="default" xsi:type="string">SantanderInstantConfigValueHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="SantanderInstantConfigValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">SantanderInstantConfig</argument>
+        </arguments>
+    </virtualType>
+
     <virtualType name="SantanderCountryValidator"
                  type="SantanderPaymentSolutions\SantanderPayments\Gateway\Validator\CountryValidator">
 

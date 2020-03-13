@@ -99,6 +99,37 @@
                     <frontend_class>validate-number</frontend_class>
                 </field>
             </group>
+            <group id="santander_instant" translate="label" type="text" sortOrder="2" showInDefault="1" showInWebsite="1"
+                   showInStore="1">
+                <label>Direktüberweisung mit Santander</label>
+                <field id="active" translate="label" type="select" sortOrder="100" showInDefault="1" showInWebsite="1"
+                       showInStore="0">
+                    <label>Aktiv</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="api_key" translate="label" type="text" sortOrder="200" showInDefault="1" showInWebsite="1"
+                       showInStore="0">
+                    <label>API Key</label>
+                </field>
+                <field id="iban" translate="label" type="text" sortOrder="300" showInDefault="1" showInWebsite="1"
+                       showInStore="0">
+                    <label>IBAN</label>
+                </field>
+                <field id="account_holder" translate="label" type="text" sortOrder="400" showInDefault="1" showInWebsite="1"
+                       showInStore="0">
+                    <label>Kontoinhaber</label>
+                </field>
+                <field id="subject" translate="label" type="text" sortOrder="500" showInDefault="1" showInWebsite="1"
+                       showInStore="0">
+                    <label>Verwendungszweck für Überweisung</label>
+                    <comment><![CDATA[<ul><li>Möglichst kurz halten</li><li>nur a-z, A-Z, 0-9</li><li>%order_id% als Platzhalter für Auftragsnummer verwenden</li></ul>]]></comment>
+                </field>
+                <field id="sort_order" translate="label" type="text" sortOrder="700" showInDefault="1" showInWebsite="1"
+                       showInStore="0">
+                    <label>Sort Order</label>
+                    <frontend_class>validate-number</frontend_class>
+                </field>
+            </group>
         </section>
     </system>
 </config>

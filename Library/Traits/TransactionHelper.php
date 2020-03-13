@@ -29,8 +29,6 @@ trait TransactionHelper
      */
     protected $logger;
 
-    abstract function getTransactions($idField, $idValue, $type, $status);
-
     public function initialize($method, $birthday = null)
     {
         return $this->call(
@@ -119,6 +117,9 @@ trait TransactionHelper
         $transaction->customerId     = (!empty($parameters["basket_overview"]->customer_id) ? $parameters["basket_overview"]->customerId : null);
         $transaction->currency       = (!empty($parameters["basket_overview"]->currency) ? $parameters["basket_overview"]->currency : 'EUR');
 
+        if ($transaction->type === 'initialize') {
+            $transaction->sessionId = $this->checkoutHelper->getSessionIdentifier();
+        }
         if (!empty($parameters["order_id"])) {
             $transaction->orderId = (int)$parameters["order_id"];
         }
@@ -342,13 +343,14 @@ trait TransactionHelper
                 return ['isSuccess' => false, 'error' => 'unknown action: "' . $action . '"'];
         }
 
-        $response               = $paymentMethodObject->getResponse();
-        $result                 = new CallResult();
-        $result->isSuccess      = $response->isSuccess();
-        $result->responseObject = $response;
-        $result->responseArray  = json_decode(json_encode($response), true);
-        $result->requestObject  = $request;
-        $result->requestArray   = json_decode(json_encode($request), true);
+        $response                      = $paymentMethodObject->getResponse();
+        $result                        = new CallResult();
+        $result->isSuccess             = $response->isSuccess();
+        $result->responseObject        = $response;
+        $result->responseArray         = json_decode(json_encode($response), true);
+        $result->originalResponseArray = $paymentMethodObject->getResponseArray();
+        $result->requestObject         = $request;
+        $result->requestArray          = json_decode(json_encode($request), true);
 
         return $result;
     }
@@ -391,6 +393,7 @@ trait TransactionHelper
         if ($result === null || !$result->isSuccess) {
             $result = $this->refund($reservation, $amount, $basketId);
         }
+
         return $result;
     }
 
@@ -485,6 +488,8 @@ trait TransactionHelper
 
         return null;
     }
+
+    abstract function getTransactions($idField, $idValue, $type, $status);
 
     /**
      * @param $uniqueId

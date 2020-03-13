@@ -5,6 +5,7 @@
             <argument name="configProviders" xsi:type="array">
                 <item name="santander_invoice_config_provider" xsi:type="object">SantanderPaymentSolutions\SantanderPayments\Model\Ui\InvoiceConfigProvider</item>
                 <item name="santander_hire_config_provider" xsi:type="object">SantanderPaymentSolutions\SantanderPayments\Model\Ui\HireConfigProvider</item>
+                <item name="santander_instant_config_provider" xsi:type="object">SantanderPaymentSolutions\SantanderPayments\Model\Ui\InstantConfigProvider</item>
             </argument>
         </arguments>
     </type>
@@ -16,6 +17,13 @@
         </arguments>
     </type>
     <type name="SantanderPaymentSolutions\SantanderPayments\Block\HireInfo">
+        <arguments>
+            <argument name="data" xsi:type="array">
+                <item xsi:type="string" name="is_secure_mode">1</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="SantanderPaymentSolutions\SantanderPayments\Block\InstantInfo">
         <arguments>
             <argument name="data" xsi:type="array">
                 <item xsi:type="string" name="is_secure_mode">1</item>

@@ -7,6 +7,7 @@ class CallResult extends Base{
     public $requestArray;
     public $responseObject;
     public $responseArray;
+    public $originalResponseArray;
     public $isSuccess;
     public $errors;
     public $transaction;

@@ -5,12 +5,12 @@ define(
         'Magento_Checkout/js/view/payment/default',
         'Magento_Checkout/js/model/payment/additional-validators',
         'Magento_Checkout/js/action/redirect-on-success',
+        'Magento_Checkout/js/action/get-payment-information',
         'Magento_Checkout/js/model/full-screen-loader',
         'jquery',
     ],
-    function (Component, additionalValidators, redirectOnSuccessAction, loader, $) {
+    function (Component, additionalValidators, redirectOnSuccessAction, getPaymentInformation, loader, $) {
         'use strict';
-        console.log('invoice init');
         return Component.extend({
             defaults: {
                 template: 'SantanderPaymentSolutions_SantanderPayments/payment/invoice_form'
@@ -119,8 +119,7 @@ define(
                                 data: {
                                     'NAME.BIRTHDATE': birthdayYearVal + '-' + birthdayMonthVal + '-' + birthdayDayVal,
                                     'NAME.SALUTATION': genderVal,
-                                    'CUSTOMER.OPTIN_2': 'TRUE',
-                                    'CUSTOMER.OPTIN': ($('[name="santander_invoice[additional_optin]"]').is(':checked') ? 'TRUE' : 'FALSE')
+                                    'CUSTOMER.ACCEPT_PRIVACY_POLICY':'TRUE'
                                 },
                                 complete: function () {
                                     $.get(window.checkoutConfig.payment.santander_invoice.callback_url, function (data) {
@@ -144,6 +143,7 @@ define(
                                             );
                                         } else {
                                             alert(defaultErrorMessage);
+                                            getPaymentInformation();
                                             self.isPlaceOrderActionAllowed(true);
                                             loader.stopLoader();
                                         }

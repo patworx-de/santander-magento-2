@@ -23,6 +23,26 @@ class ConfigHelper extends AbstractHelper implements ConfigHelperInterface
         return $this->_urlBuilder->getRouteUrl('santander/callback/');
     }
 
+    public function getInstantTransferWebHookUrl()
+    {
+        return $this->_urlBuilder->getRouteUrl('santander/webhook/');
+    }
+
+    public function getInstantTransferControllerUrl()
+    {
+        return $this->_urlBuilder->getRouteUrl('santander/instant/');
+    }
+
+    public function getInstantTransferFinishControllerUrl()
+    {
+        return $this->_urlBuilder->getRouteUrl('santander/instant/finish/');
+    }
+
+    public function getInstantTransferCancelControllerUrl()
+    {
+        return $this->_urlBuilder->getRouteUrl('santander/instant/cancel/');
+    }
+
     public function getAuth($method, $store = null)
     {
         return [

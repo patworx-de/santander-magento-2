@@ -80,10 +80,10 @@ define(
                     event.preventDefault();
                 }
 
-                if (!$('[name="santander_invoice[optin]"]').is(':checked')) {
+                /*if (!$('[name="santander_invoice[optin]"]').is(':checked')) {
                     alert('Bitte akzeptieren Sie die Datenschutzerklärung von Santander');
                     return false;
-                }
+                }*/
 
                 var genderVal = $('[name="santander_invoice[gender]"]').val();
                 if (!genderVal) {
@@ -119,7 +119,8 @@ define(
                                 data: {
                                     'NAME.BIRTHDATE': birthdayYearVal + '-' + birthdayMonthVal + '-' + birthdayDayVal,
                                     'NAME.SALUTATION': genderVal,
-                                    'CUSTOMER.ACCEPT_PRIVACY_POLICY':'TRUE'
+                                    'CUSTOMER.OPTIN_2': 'TRUE',
+                                    'CUSTOMER.OPTIN': ($('[name="santander_invoice[additional_optin]"]').is(':checked') ? 'TRUE' : 'FALSE')
                                 },
                                 complete: function () {
                                     $.get(window.checkoutConfig.payment.santander_invoice.callback_url, function (data) {

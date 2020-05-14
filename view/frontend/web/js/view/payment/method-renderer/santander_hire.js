@@ -7,9 +7,10 @@ define(
         'Magento_Checkout/js/action/redirect-on-success',
         'Magento_Checkout/js/action/get-payment-information',
         'Magento_Checkout/js/model/full-screen-loader',
+        'Magento_Checkout/js/checkout-data',
         'jquery',
     ],
-    function (Component, additionalValidators, redirectOnSuccessAction, getPaymentInformation, loader, $) {
+    function (Component, additionalValidators, redirectOnSuccessAction, getPaymentInformation, loader, checkoutData, $) {
         'use strict';
         return Component.extend({
             defaultErrorMessage: 'Die von Ihnen gewählte Zahlungsart kann Ihnen leider nicht angeboten werden. Bitte wählen Sie eine andere Zahlungsart aus',
@@ -133,6 +134,7 @@ define(
 
                 $.post(window.checkoutConfig.payment.santander_hire.callback_url, {
                     action: 'initialize_hire',
+                    email:checkoutData.getValidatedEmailValue(),
                     'NAME_BIRTHDATE': birthdayYearVal + '-' + birthdayMonthVal + '-' + birthdayDayVal,
                     'NAME_SALUTATION': genderVal
                 }, function (initializeResponse) {
@@ -172,7 +174,7 @@ define(
                 loader.startLoader();
 
                 self.isPlaceOrderActionAllowed(false);
-                $.post(window.checkoutConfig.payment.santander_invoice.callback_url, {action: 'authorize_on_registration'}, function (authorizeOnRegistrationResponse) {
+                $.post(window.checkoutConfig.payment.santander_invoice.callback_url, {action: 'authorize_on_registration', email:checkoutData.getValidatedEmailValue()}, function (authorizeOnRegistrationResponse) {
                     if (typeof authorizeOnRegistrationResponse !== 'object') {
                         authorizeOnRegistrationResponse = JSON.parse(authorizeOnRegistrationResponse);
                     }

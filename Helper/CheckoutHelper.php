@@ -89,7 +89,7 @@ class CheckoutHelper implements CheckoutHelperInterface
                 'postcode'  => $address->getPostcode(),
                 'city'      => $address->getCity(),
                 'country'   => $address->getCountryModel()->getCountryId(),
-                'email'     => $address->getEmail(),
+                'email'     => $quote->getCustomerEmail(),
                 'gender'    => $gender
             ]);
         }

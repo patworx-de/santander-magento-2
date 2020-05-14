@@ -7,9 +7,10 @@ define(
         'Magento_Checkout/js/action/redirect-on-success',
         'Magento_Checkout/js/action/get-payment-information',
         'Magento_Checkout/js/model/full-screen-loader',
+        'Magento_Checkout/js/checkout-data',
         'jquery',
     ],
-    function (Component, additionalValidators, redirectOnSuccessAction, getPaymentInformation, loader, $) {
+    function (Component, additionalValidators, redirectOnSuccessAction, getPaymentInformation, loader, checkoutData, $) {
         'use strict';
         return Component.extend({
             defaults: {
@@ -108,7 +109,7 @@ define(
                 loader.startLoader();
                 if (self.validate() && additionalValidators.validate()) {
                     self.isPlaceOrderActionAllowed(false);
-                    $.post(window.checkoutConfig.payment.santander_invoice.callback_url, {action: 'reauthorize_invoice'}, function (reauthorizeResponse) {
+                    $.post(window.checkoutConfig.payment.santander_invoice.callback_url, {action: 'reauthorize_invoice', email:checkoutData.getValidatedEmailValue()}, function (reauthorizeResponse) {
                         if (typeof reauthorizeResponse !== 'object') {
                             reauthorizeResponse = JSON.parse(reauthorizeResponse);
                         }

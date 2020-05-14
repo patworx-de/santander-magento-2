@@ -5,6 +5,7 @@ namespace SantanderPaymentSolutions\SantanderPayments\Controller\Callback;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\App\CsrfAwareActionInterface;
+use Magento\Framework\App\ObjectManager;
 use Magento\Framework\App\Request\InvalidRequestException;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Controller\ResultFactory;
@@ -38,6 +39,9 @@ class Index extends Action implements CsrfAwareActionInterface
     {
         $vars = $this->context->getRequest()->getPostValue();
         if (!empty($vars["action"]) && $vars["action"] == 'reauthorize_invoice') {
+            if (!empty($vars['email'])) {
+                $this->setEmail($vars['email']);
+            }
             $response = $this->transactionHelper->authorize('invoice');
             $return   = ['success' => 0];
             if ($response->isSuccess) {
@@ -51,6 +55,9 @@ class Index extends Action implements CsrfAwareActionInterface
 
             return $response;
         } elseif (!empty($vars["action"]) && $vars["action"] == 'initialize_hire') {
+            if (!empty($vars['email'])) {
+                $this->setEmail($vars['email']);
+            }
             $response = $this->transactionHelper->initialize('hire', $vars["NAME_BIRTHDATE"]);
             $return   = ['success' => 0];
             if ($response->isSuccess) {
@@ -64,6 +71,9 @@ class Index extends Action implements CsrfAwareActionInterface
 
             return $response;
         } elseif (!empty($vars["action"]) && $vars["action"] == 'authorize_on_registration') {
+            if (!empty($vars['email'])) {
+                $this->setEmail($vars['email']);
+            }
             $return = ['success' => 0];
             if ($cReference = $this->integrationHelper->getLastReference()) {
                 $transaction = $this->transactionHelper->getByReference($cReference, 'initialize_2');
@@ -182,5 +192,20 @@ class Index extends Action implements CsrfAwareActionInterface
     public function validateForCsrf(RequestInterface $request): ?bool
     {
         return true;
+    }
+
+    private function setEmail($email){
+        try {
+            $objectManager = ObjectManager::getInstance();
+            /** @var \Magento\Checkout\Model\Session $checkoutSession */
+            $checkoutSession = $objectManager->get('\Magento\Checkout\Model\Session');
+            $quote           = $checkoutSession->getQuote();
+            if (!$quote->getCustomerEmail()) {
+                $quote->setCustomerEmail($email);
+                $quote->save();
+            }
+        } catch (\Exception $e) {
+
+        }
     }
 }

@@ -81,10 +81,10 @@ define(
                     event.preventDefault();
                 }
 
-                /*if (!$('[name="santander_invoice[optin]"]').is(':checked')) {
+                if (!$('[name="santander_invoice[optin]"]').is(':checked')) {
                     alert('Bitte akzeptieren Sie die Datenschutzerklärung von Santander');
                     return false;
-                }*/
+                }
 
                 var genderVal = $('[name="santander_invoice[gender]"]').val();
                 if (!genderVal) {

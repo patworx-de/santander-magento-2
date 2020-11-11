@@ -27,13 +27,11 @@ final class InvoiceConfigProvider implements ConfigProviderInterface
         if (!empty($response->responseArray["config"]["optin_text"])) {
             if ($optInData = json_decode($response->responseArray["config"]["optin_text"], true)) {
                 $this->integrationHelper->setLastReference($response->responseArray["identification"]["transactionid"]);
-
                 if (!empty($response->originalResponseArray["CONFIG_OPTIN_TEXT_SCB_2"])) {
                     if ($optInDataNew = json_decode(str_replace("\n", " ", $response->originalResponseArray["CONFIG_OPTIN_TEXT_SCB_2"]), true)) {
                         $newOptin = $optInDataNew ['optin'];
                     }
                 }
-
                 return [
                     'payment' => [
                         self::CODE => [
@@ -45,7 +43,6 @@ final class InvoiceConfigProvider implements ConfigProviderInterface
                 ];
             }
         }
-
         return [];
     }
 }

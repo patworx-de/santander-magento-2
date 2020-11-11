@@ -25,6 +25,33 @@ class CheckoutHelper implements CheckoutHelperInterface
     }
 
     /**
+     * @return array|\SantanderPaymentSolutions\SantanderPayments\Library\Struct\BasketItem[]
+     */
+    public function getBasketItems()
+    {
+        $items = [];
+        /** @var \Magento\Quote\Model\Quote\Item $cartItem */
+        foreach ($this->checkoutSession->getQuote()->getAllItems() as $cartItem) {
+            if ($price = $cartItem->getPriceInclTax()) {
+                $item           = new BasketItem();
+                $item->name     = $cartItem->getName();
+                $item->id       = $cartItem->getSku();
+                $item->quantity = $cartItem->getQty();
+                $item->vat      = $cartItem->getTaxPercent();
+                $item->price    = $price;
+                $items[]        = $item;
+            }
+        }
+
+        return $items;
+    }
+
+    public function getSessionIdentifier()
+    {
+        return $this->checkoutSession->getSessionId() . '_' . round($this->getBasketOverview()->amount * 100) . '_' . md5(serialize($this->getAddress()->toArray()));
+    }
+
+    /**
      * @return \SantanderPaymentSolutions\SantanderPayments\Library\Struct\BasketOverview
      */
     public function getBasketOverview()
@@ -55,32 +82,10 @@ class CheckoutHelper implements CheckoutHelperInterface
         ]);
     }
 
-    /**
-     * @return array|\SantanderPaymentSolutions\SantanderPayments\Library\Struct\BasketItem[]
-     */
-    public function getBasketItems()
-    {
-        $items = [];
-        /** @var \Magento\Quote\Model\Quote\Item $cartItem */
-        foreach ($this->checkoutSession->getQuote()->getAllItems() as $cartItem) {
-            if ($price = $cartItem->getPriceInclTax()) {
-                $item           = new BasketItem();
-                $item->name     = $cartItem->getName();
-                $item->id       = $cartItem->getSku();
-                $item->quantity = $cartItem->getQty();
-                $item->vat      = $cartItem->getTaxPercent();
-                $item->price    = $price;
-                $items[]        = $item;
-            }
-        }
-
-        return $items;
-    }
-
     public function getAddress($gender = null)
     {
         $quote = $this->checkoutSession->getQuote();
-        if ($address = $quote->getBillingAddress()) {
+        if ($address = $quote->getShippingAddress()) {
             return new Address([
                 'firstName' => $address->getFirstname(),
                 'lastName'  => $address->getLastname(),
@@ -97,29 +102,58 @@ class CheckoutHelper implements CheckoutHelperInterface
         return new Address([]);
     }
 
-    public function getSessionIdentifier(){
-        return $this->checkoutSession->getSessionId().'_'.round($this->getBasketOverview()->amount*100).'_'.md5(serialize($this->getAddress()->toArray()));
-    }
-
     public function isAddressOk()
     {
         $quote = $this->checkoutSession->getQuote();
         if (($billingAddress = $quote->getBillingAddress()) && ($shippingAddress = $quote->getShippingAddress())) {
             return (
-                empty($billingAddress->getCompany())
+                (empty($billingAddress->getCompany()) || $billingAddress->getCompany() === '-')
                 &&
                 empty($shippingAddress->getCompany())
                 &&
-                $billingAddress->getFirstname() === $shippingAddress->getFirstname()
+                ($billingAddress->getFirstname() === $shippingAddress->getFirstname() || $billingAddress->getFirstname() === '-')
                 &&
-                $billingAddress->getLastname() === $shippingAddress->getLastname()
+                ($billingAddress->getLastname() === $shippingAddress->getLastname() || $billingAddress->getLastname() === '-')
                 &&
-                $billingAddress->getStreetFull() === $shippingAddress->getStreetFull()
+                ($billingAddress->getStreetFull() === $shippingAddress->getStreetFull() || $billingAddress->getStreetFull() === '-')
                 &&
-                $billingAddress->getPostcode() === $shippingAddress->getPostcode()
+                ($billingAddress->getPostcode() === $shippingAddress->getPostcode() || $billingAddress->getPostcode() === '-')
                 &&
-                $billingAddress->getCountryId() === $shippingAddress->getCountryId()
+                ($billingAddress->getCountryId() === $shippingAddress->getCountryId() || $billingAddress->getCountryId() === '-')
             );
+        }
+
+        return false;
+    }
+
+    public function isAddressSet()
+    {
+        $quote = $this->checkoutSession->getQuote();
+        if ($shippingAddress = $quote->getShippingAddress()) {
+            return (
+                !empty($shippingAddress->getFirstname())
+                &&
+                !empty($shippingAddress->getLastname())
+                &&
+                !empty($shippingAddress->getStreetFull())
+                &&
+                !empty($shippingAddress->getPostcode())
+                &&
+                !empty($shippingAddress->getCountryId())
+                &&
+                !empty($quote->getCustomerEmail())
+            );
+        }
+
+        return false;
+    }
+
+    public function isShippingSet()
+    {
+        $quote = $this->checkoutSession->getQuote();
+        if ($shippingAddress = $quote->getShippingAddress()) {
+            return !empty($shippingAddress->getShippingMethod());
+
         }
 
         return false;

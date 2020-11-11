@@ -104,7 +104,7 @@ class UpgradeSchema implements UpgradeSchemaInterface
             )
             ->addColumn(
                 'amount',
-                Table::TYPE_FLOAT,
+                Table::TYPE_DECIMAL,
                 '8,2',
                 [
                     'nullable' => false

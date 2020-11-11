@@ -17,7 +17,6 @@ define(
             defaults: {
                 template: 'SantanderPaymentSolutions_SantanderPayments/payment/hire_form'
             },
-
             getCode: function () {
                 return 'santander_hire';
             },
@@ -40,6 +39,25 @@ define(
                     months.push(String("0" + String(month)).slice(-2));
                 }
                 return months;
+            },
+
+            oneStepCheckoutCompatibility: function(){
+                $(function(){
+                    if($('.opc-wrapper').length){
+                        setInterval(function(){
+                            var $originalButton = $('.payment-method .santander-hire-choose-payment-plan');
+                            if($originalButton.length){
+                                $originalButton.detach().appendTo('.iosc-place-order-container');
+                            }
+                            if($('input[name="payment[method]"][value="santander_hire"]').is(':checked')){
+                                $('.iosc-place-order-container .santander-hire-choose-payment-plan').addClass('is-available');
+                            }else{
+                                $('.iosc-place-order-container .santander-hire-choose-payment-plan').removeClass('is-available');
+                            }
+                        }, 200);
+                    }
+                });
+                return false;
             },
 
             popup: function (url) {

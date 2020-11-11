@@ -299,6 +299,17 @@ trait TransactionHelper
             $request->getCriterion()->set('OrderReference', $orderId);
         }
 
+        $mageVersion = 2;
+        try {
+            $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+            $productMetadata = $objectManager->get('Magento\Framework\App\ProductMetadataInterface');
+            $mageVersion = $productMetadata->getVersion();
+        } catch (\Exception $e) {
+            $mageVersion = 2;
+        }
+        $request->getCriterion()->set('SHOP.TYPE', 'Magento ' . $mageVersion);
+        $request->getCriterion()->set('SHOPMODULE.VERSION', 'SantanderPaymentSolutions Magento 2 1.3.3');
+
         if (in_array($action, ['reservation', 'initialize', 'authorize', 'authorize_on_registration'])) {
             $request->getContact()->setIp($_SERVER['REMOTE_ADDR']);
         }

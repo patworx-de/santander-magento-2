@@ -13,7 +13,7 @@
     "magento/module-backend": "^100.0.0 | ^101.0.0 | ^102.0.0",
     "magento/framework": "^100.0.0 | ^101.0.0 | ^102.0.0",
     "heidelpay/php-basket-api": "~1.0",
-    "heidelpay/php-payment-api": "~1.4"
+    "patworx-de/heidelpay-php-payment-api": "1.7.1.1"
   },
 
   "repositories": [
@@ -24,7 +24,7 @@
   ],
   "type": "magento2-module",
   "license": "MIT",
-  "version": "1.3.4",
+  "version": "1.3.5",
   "autoload": {
     "files": [
       "registration.php"
